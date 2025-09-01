@@ -92,5 +92,368 @@ create table if not exists cursos(
 nome varchar(30) not null unique,
 descricao text,
 carga int unsigned,
+totaulas int unsigned,
 ano year default '2025'
 )default charset=utf8;
+
+select * from cursos;
+
+alter table cursos
+add column idcursos int first;
+
+desc cursos;
+
+alter table cursos
+add primary key (idcursos);
+
+desc cursos;
+
+insert into cursos values
+('1', 'HTML4', 'Cursos de HTML5', '40', '37', '2020'),
+('2', 'PHG', 'PHP iniciante', '20', '15', '2021'),
+('3', 'JAVRA', 'JAVA 00', '10', '8', '2022'),
+('4', 'C', 'C iniciante', '40', '20', '2023'),
+('5', 'RUBY', 'Ruby 00', '10', '29', '2024');
+
+drop table cursos;
+
+create table if not exists cursos(
+nome varchar(30) not null unique,
+descricao text,
+carga int unsigned,
+totaulas int unsigned,
+ano year default '2025'
+)default charset=utf8;
+
+select * from cursos;
+
+desc cursos;
+
+alter table cursos
+add column idcurso int first;
+
+desc cursos;
+
+alter table cursos
+add primary key (idcurso);
+
+desc cursos;
+
+create database faculdade;
+
+create table pessoas(
+nome varchar(30),
+idade int,
+genero char(1),
+peso float,
+altura float,
+nacionalidade varchar(20)
+);
+
+create table professores(
+id int not null auto_increment,
+nome varchar(30) not null,
+nascimento date,
+genero enum('M','F'),
+peso decimal(5,2),
+altura decimal(3,2),
+nacionalidade varchar(20) default 'Brasil',
+primary key (id)
+) default charset = utf8;
+
+drop table pessoas;
+
+create table pessoas(
+id int not null auto_increment,
+nome varchar(30) not null,
+nascimento date,
+genero enum('M,F'),
+peso decimal (5,2),
+altura decimal (3,2),
+nacionalidade varchar(20) default 'Brasil',
+primary key(id)
+)default charset=utf8;
+
+drop table pessoas9;
+
+select * from pessoas;
+
+insert into pessoas
+(id, nome, nascimento, genero, peso, altura, nacionalidade)
+values 
+(default, 'Joao', '1047-01-02', 'M', '90.5', '1.93', default);
+
+insert into pessoas values
+(default, 'Julia', '1046-01-03', 'F', '60.7', '1.63', default),
+(default, 'Leticia', '1047-02-04', 'F', '62.6', '1.54', 'Canada'),
+(default, 'jessica', '1048-02-05', 'F', '70.5', '1.48', 'EUA');
+
+
+describe pessoas;
+desc pessoas;
+
+alter table pessoas
+add column profissao varchar(10);
+
+alter table pessoas
+add codigo int first;
+
+alter table pessoas
+drop column profissao;
+
+alter table pessoas
+add column profissao varchar(10) after nome;
+
+alter table pessoas
+modify column profissao varchar(20) not null default '';
+
+alter table pessoas
+rename to alunos;
+
+create table if not exists cursos(
+nome varchar(30) not null unique,
+descricao text,
+carga int unsigned,
+ano year default '2025'
+)default charset=utf8;
+
+select * from cursos;
+
+alter table cursos
+add column idcurso int first;
+
+alter table cursos
+add primary key (idcurso);
+
+desc cursos;
+
+drop table cursos;
+
+create table if not exists cursos(
+nome varchar(30) not null unique,
+descricao text,
+carga int unsigned,
+totaulas int unsigned,
+ano year default '2025'
+)default charset=utf8;
+
+select * from cursos;
+
+alter table cursos
+add column idcursos int first;
+
+desc cursos;
+
+alter table cursos
+add primary key (idcursos);
+
+desc cursos;
+
+insert into cursos values
+('1', 'HTML4', 'Cursos de HTML5', '40', '37', '2020'),
+('2', 'PHG', 'PHP iniciante', '20', '15', '2021'),
+('3', 'JAVRA', 'JAVA 00', '10', '8', '2022'),
+('4', 'C', 'C iniciante', '40', '20', '2023'),
+('5', 'RUBY', 'Ruby 00', '10', '29', '2024');
+
+drop table cursos;
+
+create table if not exists cursos(
+nome varchar(30) not null unique,
+descricao text,
+carga int unsigned,
+totaulas int unsigned,
+ano year default '2025'
+)default charset=utf8;
+
+select * from cursos;
+
+desc cursos;
+
+alter table cursos
+add column idcurso int first;
+
+desc cursos;
+
+alter table cursos
+add primary key (idcurso);
+
+desc cursos;
+
+
+create database faculdade;
+
+create table pessoas(
+nome varchar(30),
+idade int,
+genero char(1),
+peso float,
+altura float,
+nacionalidade varchar(20)
+);
+
+create table professores(
+id int not null auto_increment,
+nome varchar(30) not null,
+nascimento date,
+genero enum('M','F'),
+peso decimal(5,2),
+altura decimal(3,2),
+nacionalidade varchar(20) default 'Brasil',
+primary key (id)
+) default charset = utf8;
+
+drop table pessoas;
+
+create table pessoas(
+id int not null auto_increment,
+nome varchar(30) not null,
+nascimento date,
+genero enum('M,F'),
+peso decimal (5,2),
+altura decimal (3,2),
+nacionalidade varchar(20) default 'Brasil',
+primary key(id)
+)default charset=utf8;
+
+drop table pessoas9;
+
+select * from pessoas;
+
+insert into pessoas
+(id, nome, nascimento, genero, peso, altura, nacionalidade)
+values 
+(default, 'Joao', '1047-01-02', 'M', '90.5', '1.93', default);
+
+insert into pessoas values
+(default, 'Julia', '1046-01-03', 'F', '60.7', '1.63', default),
+(default, 'Leticia', '1047-02-04', 'F', '62.6', '1.54', 'Canada'),
+(default, 'jessica', '1048-02-05', 'F', '70.5', '1.48', 'EUA');
+
+
+describe pessoas;
+desc pessoas;
+
+alter table pessoas
+add column profissao varchar(10);
+
+alter table pessoas
+add codigo int first;
+
+alter table pessoas
+drop column profissao;
+
+alter table pessoas
+add column profissao varchar(10) after nome;
+
+alter table pessoas
+modify column profissao varchar(20) not null default '';
+
+alter table pessoas
+rename to alunos;
+
+create table if not exists cursos(
+nome varchar(30) not null unique,
+descricao text,
+carga int unsigned,
+ano year default '2025'
+)default charset=utf8;
+
+select * from cursos;
+
+alter table cursos
+add column idcurso int first;
+
+alter table cursos
+add primary key (idcurso);
+
+desc cursos;
+
+drop table cursos;
+
+create table if not exists cursos(
+nome varchar(30) not null unique,
+descricao text,
+carga int unsigned,
+totaulas int unsigned,
+ano year default '2025'
+)default charset=utf8;
+
+select * from cursos;
+
+alter table cursos
+add column idcursos int first;
+
+desc cursos;
+
+alter table cursos
+add primary key (idcursos);
+
+desc cursos;
+
+insert into cursos values
+('1', 'HTML4', 'Cursos de HTML5', '40', '37', '2020'),
+('2', 'PHG', 'PHP iniciante', '20', '15', '2021'),
+('3', 'JAVRA', 'JAVA 00', '10', '8', '2022'),
+('4', 'C', 'C iniciante', '40', '20', '2023'),
+('5', 'RUBY', 'Ruby 00', '10', '29', '2024');
+
+drop table cursos;
+
+create table if not exists cursos(
+nome varchar(30) not null unique,
+descricao text,
+carga int unsigned,
+totaulas int unsigned,
+ano year default '2025'
+)default charset=utf8;
+
+select * from cursos;
+
+desc cursos;
+
+alter table cursos
+add column idcurso int first;
+
+desc cursos;
+
+alter table cursos
+add primary key (idcurso);
+
+desc cursos;
+
+insert into cursos values
+('1', 'HTML4', 'Cursos de HTML5', '40', '37', '2020'),
+('2', 'PHG', 'PHP iniciante', '20', '15', '2021'),
+('3', 'JAVRA', 'JAVA 00', '10', '8', '2022'),
+('4', 'C', 'C iniciante', '40', '20', '2023'),
+('5', 'RUBY', 'Ruby 00', '10', '29', '2024');
+
+desc cursos;
+
+select * from cursos;
+
+update cursos
+set nome =  'PHP', ano = '2026'
+where idcurso = '2';
+
+
+desc cursos;
+
+update cursos
+set nome = 'JAVA', carga = '40'
+where idcurso = '3'
+limit 1; 
+
+select * from cursos;
+
+desc cursos;
+
+insert into cursos values
+('9', 'Sapato', 'Sapateado', '25', '30', '2023'),
+('7', 'Linha', 'Costura', '20', '12', '2024'),
+('8', 'Gastro', 'Vinho', '10', '9', '2025');
+
+select * from cursos;
+
+desc cursos;

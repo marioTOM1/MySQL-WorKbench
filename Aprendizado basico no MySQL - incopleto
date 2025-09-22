@@ -457,3 +457,38 @@ insert into cursos values
 select * from cursos;
 
 desc cursos;
+create table profissionais(
+id int not null auto_increment,
+nome varchar(30) not null,
+nascimento date,
+genero enum ('M','F'),
+peso decimal (5,2),
+altura decimal (3,2),
+nacionalidade varchar(20),
+primary key (id)
+);
+
+select * from profissionais;
+
+
+insert into profissionais values
+(default, 'Maria', '1996-10-03', 'F', '60.2', '1.70', 'Brasil'),
+(default, 'Bernardo', '1996-10-03', 'M', '80.2', '1.80', 'Brasil'),
+(default, 'Noah', '1996-10-03', 'M', '90.2', '1.80', 'EUA');
+
+select * from profissionais;
+desc profissionais;
+
+alter table profissionais
+modify column nacionalidade varchar(10) not null;
+
+alter table profissionais
+change column nacionalidade nacio varchar(10);
+
+alter table profissionais
+rename to profss;
+
+select * from profss;
+
+select * from profss
+where nome like 'm%r_';

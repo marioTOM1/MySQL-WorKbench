@@ -492,3 +492,20 @@ select * from profss;
 
 select * from profss
 where nome like 'm%r_';
+
+
+
+
+aula noturna
+
+desc tb_artista;
+
+select distinct id, nome, dt_nascimento from tb_artista
+ORDER BY nome ASC
+LIMIT 50;
+
+desc tb_musica;
+
+select nome, duracao from tb_musica
+WHERE duracao > '00:10:00' ORDER BY duracao desc
+LIMIT 100;

@@ -1,0 +1,386 @@
+## BANCO 01 ##
+
+#1
+USE db_discoteca;
+SELECT m.nome AS musica, d.titulo AS disco, m.duracao
+FROM tb_musica m
+JOIN tb_disco d 
+ON m.id_disco = d.id
+WHERE
+ m.duracao > '00:03:30'
+ORDER BY m.duracao;
+
+#2
+SELECT a.nome AS artista, 
+COUNT(d.id) AS total_discos
+FROM tb_artista a
+LEFT JOIN tb_disco d ON d.id_artista = a.id
+GROUP BY a.id, a.nome
+ORDER BY total_discos DESC;
+
+#3
+SELECT d.titulo AS disco, g.nome AS genero, d.ano_lancamento
+FROM tb_disco d
+LEFT JOIN tb_genero g ON d.id_genero = g.id
+WHERE d.ano_lancamento BETWEEN 2010 AND 2020
+ORDER BY d.ano_lancamento, d.titulo;
+
+#4
+SELECT gr.nome AS gravadora, COUNT(DISTINCT d.id_genero) AS qtd_generos
+FROM tb_gravadora gr
+JOIN tb_disco d ON d.id_gravadora = gr.id
+GROUP BY gr.id, gr.nome
+HAVING COUNT(DISTINCT d.id_genero) > 1;
+
+#5
+SELECT a.nome AS artista, COUNT(m.id) AS total_musicas
+FROM tb_artista a
+LEFT JOIN tb_disco d ON d.id_artista = a.id
+LEFT JOIN tb_musica m ON m.id_disco = d.id
+GROUP BY a.id, a.nome
+ORDER BY total_musicas DESC;
+
+#6
+SELECT d.titulo AS disco,
+       COUNT(m.id) AS num_faixas,
+       SEC_TO_TIME(SUM(TIME_TO_SEC(m.duracao))) AS duracao_total
+FROM tb_disco d
+JOIN tb_musica m ON m.id_disco = d.id
+GROUP BY d.id, d.titulo
+HAVING COUNT(m.id) > 5
+ORDER BY duracao_total DESC;
+
+#7
+SELECT t.titulo, gr.nome AS gravadora, SEC_TO_TIME(t.total_segundos) AS duracao_total
+FROM (
+    SELECT d.id, d.titulo, SUM(TIME_TO_SEC(m.duracao)) AS total_segundos
+    FROM tb_disco d
+    LEFT JOIN tb_musica m ON m.id_disco = d.id
+    GROUP BY d.id, d.titulo
+) t
+JOIN tb_gravadora gr ON gr.id = (SELECT d2.id_gravadora FROM tb_disco d2 WHERE d2.id = t.id)
+WHERE t.total_segundos > (
+    SELECT AVG(total_segundos) FROM (
+        SELECT SUM(TIME_TO_SEC(m2.duracao)) AS total_segundos
+        FROM tb_disco d3
+        LEFT JOIN tb_musica m2 ON m2.id_disco = d3.id
+        GROUP BY d3.id
+    ) AS per_disk
+)
+ORDER BY t.total_segundos DESC;
+
+#8
+SELECT a.nome AS artista, t.nome AS tipo_artista
+FROM tb_artista a
+JOIN tb_tipo_artista t ON a.id_tipo_artista = t.id
+ORDER BY a.nome;
+
+#9
+SELECT d.titulo
+FROM tb_disco d
+LEFT JOIN tb_musica m ON m.id_disco = d.id
+WHERE m.id IS NULL;
+
+#10
+SELECT d.titulo AS disco, a.nome AS artista
+FROM tb_disco d
+LEFT JOIN tb_artista a ON d.id_artista = a.id
+WHERE d.titulo LIKE '%Live%' OR d.titulo LIKE '%Ao Vivo%'
+ORDER BY d.titulo;
+
+#11
+SELECT a.nome AS artista, d.titulo AS disco, g.nome AS genero
+FROM tb_disco d
+JOIN tb_artista a ON d.id_artista = a.id
+JOIN tb_genero g ON d.id_genero = g.id
+WHERE g.nome IN ('Rock','Pop')
+ORDER BY a.nome, d.titulo;
+
+#12
+SELECT g.nome AS genero, COUNT(m.id) AS total_musicas
+FROM tb_genero g
+LEFT JOIN tb_disco d ON d.id_genero = g.id
+LEFT JOIN tb_musica m ON m.id_disco = d.id
+GROUP BY g.id, g.nome
+ORDER BY total_musicas DESC;
+
+#13
+SELECT a.nome AS artista, a.dt_nascimento, COUNT(d.id) AS total_discos
+FROM tb_artista a
+LEFT JOIN tb_disco d ON d.id_artista = a.id
+WHERE a.dt_nascimento BETWEEN '1970-01-01' AND '1990-12-31'
+GROUP BY a.id, a.nome, a.dt_nascimento
+ORDER BY total_discos DESC;
+
+#14
+SELECT gr.nome AS gravadora, d.ano_lancamento AS ano, COUNT(d.id) AS total_discos
+FROM tb_gravadora gr
+JOIN tb_disco d ON d.id_gravadora = gr.id
+GROUP BY gr.id, gr.nome, d.ano_lancamento
+ORDER BY gr.nome, d.ano_lancamento;
+
+#15
+SELECT d.titulo AS disco,
+       COUNT(m.id) AS num_faixas,
+       SEC_TO_TIME(ROUND(AVG(TIME_TO_SEC(m.duracao)))) AS duracao_media
+FROM tb_disco d
+LEFT JOIN tb_musica m ON m.id_disco = d.id
+GROUP BY d.id, d.titulo
+ORDER BY duracao_media DESC;
+
+#16
+SELECT a.nome AS artista, COUNT(DISTINCT d.id_genero) AS qtd_generos
+FROM tb_artista a
+JOIN tb_disco d ON d.id_artista = a.id
+GROUP BY a.id, a.nome
+HAVING COUNT(DISTINCT d.id_genero) > 1;
+
+#17
+SELECT d.titulo AS disco,
+       SUM(TIME_TO_SEC(m.duracao)) AS duracao_total_segundos,
+       SEC_TO_TIME(SUM(TIME_TO_SEC(m.duracao))) AS duracao_total_time
+FROM tb_disco d
+JOIN tb_musica m ON m.id_disco = d.id
+GROUP BY d.id, d.titulo
+HAVING SUM(TIME_TO_SEC(m.duracao)) > 3600
+ORDER BY duracao_total_segundos DESC;
+
+#18
+SELECT g.nome AS genero,
+       SEC_TO_TIME(AVG(per_disk.total_segundos)) AS duracao_media_por_disco,
+       AVG(per_disk.total_segundos) AS duracao_media_segundos
+FROM tb_genero g
+JOIN (
+    SELECT d.id, d.id_genero, SUM(TIME_TO_SEC(m.duracao)) AS total_segundos
+    FROM tb_disco d
+    LEFT JOIN tb_musica m ON m.id_disco = d.id
+    GROUP BY d.id, d.id_genero
+) per_disk ON per_disk.id_genero = g.id
+GROUP BY g.id, g.nome
+ORDER BY AVG(per_disk.total_segundos) DESC
+LIMIT 1;
+
+#19
+SELECT DISTINCT a.nome AS artista, t.nome AS tipo_artista
+FROM tb_artista a
+JOIN tb_tipo_artista t ON a.id_tipo_artista = t.id
+JOIN tb_disco d ON d.id_artista = a.id
+WHERE d.ano_lancamento > 2018
+ORDER BY a.nome;
+
+#20
+SELECT d.titulo AS disco, COUNT(m.id) AS total_musicas
+FROM tb_disco d
+LEFT JOIN tb_musica m ON m.id_disco = d.id
+GROUP BY d.id, d.titulo
+HAVING COUNT(m.id) > 10
+ORDER BY total_musicas DESC;
+
+## BANCO 2 ##
+
+USE db_familia;
+ALTER TABLE tb_filho ADD COLUMN dt_nascimento DATE;
+
+#1
+SELECT f.nome AS filho, f.dt_nascimento
+FROM tb_filho f
+JOIN tb_mae m ON f.id_mae = m.id
+WHERE m.nome = 'Maria';
+
+#2
+SELECT p.nome AS pai, COUNT(f.id) AS total_filhos
+FROM tb_pai p
+LEFT JOIN tb_filho f ON f.id_pai = p.id
+GROUP BY p.id, p.nome
+ORDER BY total_filhos DESC;
+
+#3
+SELECT m.nome AS mae, f.nome AS filho, f.dt_nascimento
+FROM tb_filho f
+JOIN tb_mae m ON f.id_mae = m.id
+WHERE f.dt_nascimento > '2015-12-31'
+ORDER BY m.nome;
+
+#4
+SELECT p.nome AS pai
+FROM tb_pai p
+LEFT JOIN tb_filho f ON f.id_pai = p.id
+WHERE f.id IS NULL;
+
+#5
+SELECT f.nome AS filho, f.dt_nascimento, p.nome AS pai, m.nome AS mae
+FROM tb_filho f
+LEFT JOIN tb_pai p ON f.id_pai = p.id
+LEFT JOIN tb_mae m ON f.id_mae = m.id;
+
+#6
+SELECT f.nome, f.dt_nascimento
+FROM tb_filho f
+WHERE f.nome LIKE 'A%' AND f.dt_nascimento < '2010-01-01';
+
+#7
+SELECT ROUND(AVG(TIMESTAMPDIFF(YEAR, f.dt_nascimento, CURDATE())), 1) AS idade_media
+FROM tb_filho f;
+
+#8
+SELECT m.nome AS mae, COUNT(f.id) AS total_filhos
+FROM tb_mae m
+JOIN tb_filho f ON f.id_mae = m.id
+GROUP BY m.id, m.nome
+HAVING COUNT(f.id) > 2;
+
+#9
+SELECT f.nome AS filho, p.nome AS pai
+FROM tb_filho f
+JOIN tb_pai p ON f.id_pai = p.id
+WHERE p.nome LIKE '%Silva%';
+
+
+#10
+--  velho
+SELECT nome, dt_nascimento FROM tb_filho
+ORDER BY dt_nascimento ASC
+LIMIT 1;
+
+--  novo
+SELECT nome, dt_nascimento FROM tb_filho
+ORDER BY dt_nascimento DESC
+LIMIT 1;
+
+#11
+SELECT nome, dt_nascimento
+FROM tb_filho
+WHERE id_pai IS NULL;
+
+#12
+SELECT f.nome AS filho, p.nome AS pai, m.nome AS mae
+FROM tb_filho f
+JOIN tb_pai p ON f.id_pai = p.id
+JOIN tb_mae m ON f.id_mae = m.id
+WHERE p.nome = m.nome;
+
+#13
+SELECT DISTINCT m.nome AS mae
+FROM tb_mae m
+JOIN tb_filho f ON f.id_mae = m.id
+WHERE f.dt_nascimento BETWEEN '2000-01-01' AND '2010-12-31';
+
+#14
+SELECT 
+    CASE 
+        WHEN f.dt_nascimento < '2005-01-01' THEN 'Antes de 2005'
+        ELSE 'Depois de 2005'
+    END AS periodo,
+    COUNT(*) AS total_filhos
+FROM tb_filho f
+GROUP BY periodo;
+
+#15
+SELECT m.nome AS mae, COUNT(f.id) AS total_filhos
+FROM tb_mae m
+JOIN tb_filho f ON f.id_mae = m.id
+WHERE f.nome LIKE '%a'
+GROUP BY m.id, m.nome;
+
+#16
+SELECT m.nome AS mae, COUNT(f.id) AS total_filhos_jo
+FROM tb_mae m
+JOIN tb_filho f ON f.id_mae = m.id
+WHERE f.nome LIKE 'Jo%'
+GROUP BY m.id, m.nome;
+
+#17
+SELECT p.nome AS pai, m.nome AS mae, COUNT(f.id) AS total_filhos
+FROM tb_filho f
+JOIN tb_pai p ON f.id_pai = p.id
+JOIN tb_mae m ON f.id_mae = m.id
+GROUP BY p.id, m.id, p.nome, m.nome
+HAVING COUNT(f.id) >= 1;
+
+#18
+SELECT f.nome AS filho, p.nome AS pai, m.nome AS mae
+FROM tb_filho f
+JOIN tb_pai p ON f.id_pai = p.id
+JOIN tb_mae m ON f.id_mae = m.id
+WHERE p.nome <> m.nome
+  AND (f.nome LIKE CONCAT('%', SUBSTRING_INDEX(p.nome, ' ', -1), '%')
+       OR f.nome LIKE CONCAT('%', SUBSTRING_INDEX(m.nome, ' ', -1), '%'));
+
+#19
+SELECT nome, dt_nascimento
+FROM tb_filho
+WHERE dt_nascimento BETWEEN '2010-01-01' AND '2020-12-31'
+ORDER BY dt_nascimento;
+
+#20
+SELECT p.nome AS pai, m.nome AS mae, COUNT(f.id) AS total_filhos
+FROM tb_filho f
+JOIN tb_pai p ON f.id_pai = p.id
+JOIN tb_mae m ON f.id_mae = m.id
+GROUP BY p.id, m.id, p.nome, m.nome
+HAVING COUNT(f.id) > 1
+ORDER BY total_filhos DESC;
+
+## Banco 03 ##
+
+#1
+ SELECT nome, ano_lancamento
+FROM tb_jogo
+WHERE nome LIKE '%Mario%';
+
+#2
+SELECT j.nome AS jogo
+FROM tb_jogo AS j
+JOIN tb_jogo_console AS jc ON j.id = jc.id_jogo
+JOIN tb_console AS c ON jc.id_console = c.id
+WHERE c.nome = 'Xbox Series X';
+
+#4
+SELECT c.nome AS console, COUNT(jc.id_jogo) AS total_jogos
+FROM tb_console AS c
+LEFT JOIN tb_jogo_console AS jc ON c.id = jc.id_console
+GROUP BY c.id, c.nome;
+
+#5
+SELECT c.nome
+FROM tb_console AS c
+LEFT JOIN tb_jogo_console AS jc ON c.id = jc.id_console
+WHERE jc.id_jogo IS NULL;
+
+#6
+SELECT j.nome AS jogo, c.nome AS console
+FROM tb_jogo AS j
+JOIN tb_jogo_console AS jc ON j.id = jc.id_jogo
+JOIN tb_console AS c ON jc.id_console = c.id
+WHERE j.ano_lancamento BETWEEN 2010 AND 2020;
+
+#7
+SELECT j.nome AS jogo, COUNT(jc.id_console) AS total_consoles
+FROM tb_jogo AS j
+JOIN tb_jogo_console AS jc ON j.id = jc.id_jogo
+GROUP BY j.id, j.nome
+HAVING COUNT(jc.id_console) > 1;
+
+#8
+SELECT nome, ano_lancamento,
+       (SELECT ROUND(AVG(ano_lancamento)) FROM tb_jogo) AS ano_medio
+FROM tb_jogo;
+
+#9
+SELECT nome
+FROM tb_console
+WHERE nome LIKE 'P%' OR nome LIKE 'N%';
+
+#10
+SELECT ano_lancamento, COUNT(*) AS total_jogos
+FROM tb_jogo
+GROUP BY ano_lancamento
+ORDER BY total_jogos DESC;
+
+#11
+SELECT j.nome AS jogo, c.nome AS console
+FROM tb_jogo AS j
+JOIN tb_jogo_console AS jc ON j.id = jc.id_jogo
+JOIN tb_console AS c ON jc.id_console = c.id
+WHERE j.ano_lancamento > 2018
+  AND c.nome LIKE '%Switch%';
